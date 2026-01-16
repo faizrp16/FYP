@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <div class="container mt-5 mb-5" style="max-width: 800px;">
+    <h2 class="mb-4">My Profile</h2>
+    <%- include('partials/messages') %>
+
+    <!-- PROFILE DETAILS CARD -->
+    <div class="card mt-3 mb-5">
+      <div class="card-header">
+        <h5>Profile Information</h5>
+      </div>
+      <div class="card-body">
+        <!-- enctype for file upload -->
+        <form action="/profile" method="POST" enctype="multipart/form-data" class="mt-3">
+
+          <!-- Avatar Section -->
+          <div class="mb-5 text-center">
+            <% if (userProfile.avatar) { %>
+              <img 
+                src="/uploads/<%= userProfile.avatar %>" 
+                alt="Profile Picture"
+                class="profile-avatar mb-3">
+            <% } else { %>
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                class="profile-avatar avatar-placeholder mb-3"
+                alt="Default Profile Picture">
+            <% } %>
+
+            <div class="mt-3 text-start" style="max-width: 350px; margin: 0 auto;">
+              <label class="form-label">Change Profile Picture</label>
+              <input 
+                type="file" 
+                name="avatar" 
+                class="form-control"
+                accept=".jpg,.jpeg,.png">
+              <small class="text-muted">Max 2MB, JPG or PNG only</small>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input 
+              type="text" 
+              name="fullName" 
+              class="form-control"
+              required
+              minlength="2"
+              maxlength="100"
+              pattern="^[A-Za-z\s]+$"
+              title="Full name should only contain letters and spaces."
+              value="<%= userProfile.fullName || '' %>"
+              placeholder="Enter your full name">
+          </div>
+
+          <!-- Username (editable) -->
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input 
+              type="text" 
+              name="username" 
+              class="form-control"
+              required
+              minlength="3"
+              maxlength="20"
+              pattern="^[A-Za-z0-9_]{3,20}$"
+              title="3–20 characters. Only letters, numbers, and underscores are allowed."
+              value="<%= userProfile.username %>"
+              placeholder="Enter your username">
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              name="email" 
+              class="form-control"
+              required
+              value="<%= userProfile.email %>"
+              placeholder="Enter your email">
+          </div>
+
+          <!-- Bio -->
+          <div class="mb-3">
+            <label class="form-label">Bio</label>
+            <textarea 
+              name="bio" 
+              class="form-control" 
+              rows="3"
+              maxlength="300"
+              placeholder="Tell us about yourself"><%= userProfile.bio || '' %></textarea>
+            <small class="text-muted">Max 300 characters</small>
+          </div>
+
+          <!-- Phone -->
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input 
+              type="text" 
+              name="phone" 
+              class="form-control"
+              required
+              pattern="^[0-9]{8,15}$"
+              title="Phone number must be 8–15 digits, numbers only."
+              value="<%= userProfile.phone || '' %>"
+              placeholder="Enter your phone number">
+          </div>
+
+          <!-- Address -->
+          <div class="mb-4">
+            <label class="form-label">Address</label>
+            <textarea 
+              name="address" 
+              class="form-control" 
+              rows="2"
+              required
+              minlength="5"
+              maxlength="200"
+              placeholder="Enter your address"><%= userProfile.address || '' %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            💾 Save Profile Changes
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CHANGE PASSWORD CARD -->
+    <div class="card mb-5">
+      <div class="card-header">
+        <h5>Change Password</h5>
+      </div>
+      <div class="card-body">
+        <form action="/profile/password" method="POST" id="passwordForm">
+
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input 
+              type="password" 
+              name="currentPassword" 
+              class="form-control" 
+              required
+              placeholder="Enter your current password">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input 
+              type="password" 
+              name="newPassword" 
+              id="newPassword"
+              class="form-control"
+              required
+              minlength="8"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+              title="Password must be at least 8 characters, and include uppercase, lowercase, number, and special character."
+              placeholder="Create a strong password">
+            <small class="text-muted d-block mt-2">
+              Must be at least 8 characters with uppercase, lowercase, number, and special character
+            </small>
+
+            <!-- Password strength meter -->
+            <div class="mt-3">
+              <div class="progress" style="height: 6px; background-color: #e2e8f0;">
+                <div 
+                  id="passwordStrengthBar" 
+                  class="progress-bar" 
+                  role="progressbar" 
+                  style="width: 0%; background-color: #ef4444;"></div>
+              </div>
+              <small id="passwordStrengthText" class="text-muted d-block mt-1"></small>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Confirm New Password</label>
+            <input 
+              type="password" 
+              name="confirmPassword" 
+              id="confirmPassword"
+              class="form-control" 
+              required
+              placeholder="Confirm your new password">
+            <small id="passwordMatchText" class="text-muted d-block mt-1"></small>
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100">
+            🔐 Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Password strength + match JS -->
+  <script>
+    (function () {
+      const passwordInput = document.getElementById('newPassword');
+      const confirmInput = document.getElementById('confirmPassword');
+      const strengthBar = document.getElementById('passwordStrengthBar');
+      const strengthText = document.getElementById('passwordStrengthText');
+      const matchText = document.getElementById('passwordMatchText');
+
+      if (!passwordInput || !strengthBar) return;
+
+      function evaluateStrength(password) {
+        let score = 0;
+        if (!password) return 0;
+
+        if (password.length >= 8) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/\d/.test(password)) score++;
+        if (/[@$!%*?&]/.test(password)) score++;
+
+        return score;
+      }
+
+      function updateStrengthMeter() {
+        const pwd = passwordInput.value;
+        const score = evaluateStrength(pwd);
+
+        let width = 0;
+        let label = '';
+        let barColor = '#ef4444';
+
+        if (score <= 1) {
+          width = 20;
+          label = 'Very weak';
+          barColor = '#ef4444';
+        } else if (score === 2) {
+          width = 40;
+          label = 'Weak';
+          barColor = '#ef4444';
+        } else if (score === 3) {
+          width = 60;
+          label = 'Moderate';
+          barColor = '#f59e0b';
+        } else if (score === 4) {
+          width = 80;
+          label = 'Strong';
+          barColor = '#10b981';
+        } else if (score >= 5) {
+          width = 100;
+          label = 'Very strong';
+          barColor = '#10b981';
+        }
+
+        strengthBar.style.width = width + '%';
+        strengthBar.style.backgroundColor = barColor;
+        strengthText.textContent = pwd ? ('Strength: ' + label) : '';
+        strengthText.style.color = barColor;
+      }
+
+      function updateMatchText() {
+        const pwd = passwordInput.value;
+        const confirm = confirmInput.value;
+
+        if (!confirm && !pwd) {
+          matchText.textContent = '';
+          matchText.className = 'text-muted d-block mt-1';
+          return;
+        }
+
+        if (pwd && confirm && pwd === confirm) {
+          matchText.textContent = '✓ Passwords match';
+          matchText.className = 'text-success d-block mt-1';
+          matchText.style.color = '#10b981';
+        } else if (confirm) {
+          matchText.textContent = '✗ Passwords do not match';
+          matchText.className = 'text-danger d-block mt-1';
+          matchText.style.color = '#ef4444';
+        }
+      }
+
+      passwordInput.addEventListener('input', function () {
+        updateStrengthMeter();
+        updateMatchText();
+      });
+
+      if (confirmInput) {
+        confirmInput.addEventListener('input', updateMatchText);
+      }
+    })();
+  </script>
+</body>
+</html>

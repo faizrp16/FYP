@@ -1,0 +1,38 @@
+<footer class="text-center text-muted border-top border-light mt-5 pt-4 pb-3">
+  <div class="container">
+    <p class="mb-1">© 2025 Stock Portal. All rights reserved.</p>
+    <p class="mb-0 small">Secure. Reliable. Professional.</p>
+  </div>
+</footer>
+
+<script>
+// Inactivity timeout (30 minutes)
+let inactivityTimeout;
+const INACTIVITY_TIME = 30 * 60 * 1000; // 30 minutes
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimeout);
+  inactivityTimeout = setTimeout(function() {
+    alert('You have been logged out due to inactivity.');
+    window.location.href = '/logout';
+  }, INACTIVITY_TIME);
+}
+
+// Track user activity only if user is logged in
+if (document.querySelector('a[href="/logout"]')) {
+  document.addEventListener('mousemove', resetInactivityTimer);
+  document.addEventListener('keypress', resetInactivityTimer);
+  document.addEventListener('click', resetInactivityTimer);
+  document.addEventListener('scroll', resetInactivityTimer);
+  
+  // Initialize timer on page load
+  resetInactivityTimer();
+}
+
+// Auto-logout when user closes the page
+window.addEventListener('beforeunload', function(e) {
+  if (document.querySelector('a[href="/logout"]')) {
+    navigator.sendBeacon('/logout');
+  }
+});
+</script>
