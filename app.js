@@ -9,6 +9,7 @@ const db = require('./db');
 const authController = require('./controllers/authController');
 const profileController = require('./controllers/profileController');
 const adminController = require('./controllers/adminController');
+const stockController = require('./controllers/stockController');
 const { checkAuthenticated, checkAdmin } = require('./middleware/auth');
 
 // multer upload middleware
@@ -129,6 +130,19 @@ app.post('/admin/users/delete/:id', checkAdmin, adminController.deleteUser);
 // Freeze / Unfreeze
 app.post('/admin/users/freeze/:id', checkAdmin, adminController.freezeUser);
 app.post('/admin/users/unfreeze/:id', checkAdmin, adminController.unfreezeUser);
+
+// User Stocks
+app.get('/stocks', checkAuthenticated, stockController.showMyStocks);
+app.post('/stocks', checkAuthenticated, stockController.addStock);
+app.post('/stocks/:stockId/edit', checkAuthenticated, stockController.editStock);
+app.post('/stocks/:stockId/delete', checkAuthenticated, stockController.deleteStock);
+
+// Admin Stocks
+app.get('/admin/stocks', checkAdmin, stockController.adminShowAllStocks);
+app.post('/admin/stocks/:stockId/freeze', checkAdmin, stockController.freezeStock);
+app.post('/admin/stocks/:stockId/unfreeze', checkAdmin, stockController.unfreezeStock);
+app.get('/admin/stocks/report', checkAdmin, stockController.getExcessHoldingsReport);
+app.get('/admin/stocks/export', checkAdmin, stockController.exportReport);
 
 
 
