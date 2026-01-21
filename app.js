@@ -90,7 +90,7 @@ ensureAdminExists();
 
 // Home
 app.get('/', (req, res) => {
-  res.render('home', { title: 'Stock Portal Home' });
+  res.render('home', { title: 'Marketmind Home' });
 });
 
 // Auth

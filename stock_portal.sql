@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2025 at 11:17 AM
+-- Generation Time: Jan 21, 2026 at 06:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -52,15 +52,18 @@ CREATE TABLE `users` (
   `email` varchar(150) NOT NULL,
   `password` varchar(255) NOT NULL,
   `roleId` int(11) NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `isFrozen` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userId`, `username`, `email`, `password`, `roleId`, `created_at`) VALUES
-(1, 'admin', 'admin@site.com', 'admin123hashed', 2, '2025-11-19 09:35:14');
+INSERT INTO `users` (`userId`, `username`, `email`, `password`, `roleId`, `created_at`, `isFrozen`) VALUES
+(1, 'admin2', 'admin@stock.com', '$2b$10$iUb2P3.3iJ0TDx.d4fmJweF7GEsSuiDZsACAdS9xK1ykSiO4OXlZW', 2, '2025-11-23 09:34:59', 0),
+(4, 'yuzhii', 'yuzhi3112@gmail.com', '$2b$10$tHIC38AAEEsEK/NP2YgwlOn4ol.GntNRo9pAF7MwQk3MVKgaacyWC', 1, '2025-11-25 09:49:34', 0),
+(5, 'venom3112', 'venom3112@gmail.com', '$2b$10$X.mtqQ4umu/y4Qr/NPfyBeracSIcxNUz61Dsl0MKdMaVcYOiTraEG', 1, '2026-01-21 04:35:01', 0);
 
 -- --------------------------------------------------------
 
@@ -84,7 +87,9 @@ CREATE TABLE `user_profiles` (
 --
 
 INSERT INTO `user_profiles` (`profileId`, `userId`, `fullName`, `bio`, `phone`, `avatar`, `address`, `updated_at`) VALUES
-(1, 1, 'Admin User', 'This is the admin.', NULL, NULL, NULL, '2025-11-19 09:35:14');
+(1, 1, 'System Admin', 'Auto-created admin account', '', NULL, '', '2026-01-16 06:37:02'),
+(4, 4, 'Chan Yu Zhi', 'sscscs', '94728914', 'avatar_4_1764064247016.png', 'street 91, #03-15', '2025-11-25 09:50:47'),
+(5, 5, 'venom', NULL, NULL, NULL, NULL, '2026-01-21 04:35:01');
 
 --
 -- Indexes for dumped tables
@@ -104,14 +109,14 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`userId`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `roleId` (`roleId`);
+  ADD KEY `fk_users_roles` (`roleId`);
 
 --
 -- Indexes for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
   ADD PRIMARY KEY (`profileId`),
-  ADD KEY `userId` (`userId`);
+  ADD KEY `fk_profile_user` (`userId`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -127,13 +132,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `profileId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `profileId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
@@ -143,13 +148,13 @@ ALTER TABLE `user_profiles`
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `roles` (`roleId`);
+  ADD CONSTRAINT `fk_users_roles` FOREIGN KEY (`roleId`) REFERENCES `roles` (`roleId`);
 
 --
 -- Constraints for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  ADD CONSTRAINT `user_profiles_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_profile_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
